@@ -1,1 +1,1 @@
-openaipython-dotenvrequestsflask
+flaskrequestspython-dotenvopenai

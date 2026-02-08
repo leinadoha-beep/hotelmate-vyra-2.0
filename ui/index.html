@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melisa Heritage Hotel</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to bottom right, #fdf6e3, #e0f7fa);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #2c3e50;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        #message {
+            background-color: #ffffffdd;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 800px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>👋 Bun venit la Melisa Heritage</h1>
+    <div id="message">Se încarcă mesajul hotelului...</div>
+
+    <script>
+        fetch('/')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('message').textContent = data.message;
+            })
+            .catch(err => {
+                document.getElementById('message').textContent = "Eroare la conectarea cu serverul.";
+                console.error(err);
+            });
+    </script>
+</body>
+</html>

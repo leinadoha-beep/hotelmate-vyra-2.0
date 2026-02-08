@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# Environment / secrets
+.env
+*.env
+
+# Local configs / secrets
+keyopenai.txt
+*.key
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

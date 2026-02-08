@@ -1,0 +1,36 @@
+{
+  "fallback_message": {
+    "en": "Vyra is currently operating in offline mode. Some answers might be limited, but I’ll do my best to assist you using the available hotel information.",
+    "de": "Vyra befindet sich momentan im Offline-Modus. Einige Antworten könnten eingeschränkt sein, aber ich werde mein Bestes tun, um dir mit den verfügbaren Hoteldaten zu helfen."
+  },
+  "responses": {
+    "parking": {
+      "en": "Parking is available on-site for €8/day. Please contact the reception for more details.",
+      "de": "Parkplätze stehen direkt am Hotel für 8 €/Tag zur Verfügung. Bitte kontaktiere die Rezeption für weitere Informationen."
+    },
+    "pets": {
+      "en": "Dogs are allowed at the hotel for an additional fee of €25 per night.",
+      "de": "Hunde sind im Hotel erlaubt, gegen eine zusätzliche Gebühr von 25 € pro Nacht."
+    },
+    "breakfast": {
+      "en": "Breakfast is served in the lobby bar, usually between 7:00 and 10:30 AM.",
+      "de": "Das Frühstück wird in der Lobby-Bar serviert, in der Regel zwischen 7:00 und 10:30 Uhr."
+    },
+    "checkin": {
+      "en": "Check-in starts at 3:00 PM.",
+      "de": "Der Check-in beginnt um 15:00 Uhr."
+    },
+    "checkout": {
+      "en": "Check-out is possible until 12:00 PM.",
+      "de": "Der Check-out ist bis 12:00 Uhr möglich."
+    },
+    "contact": {
+      "en": "You can reach the reception by dialing 9 from your room phone or by calling +49 911-894-0110.",
+      "de": "Du erreichst die Rezeption über die 9 vom Zimmertelefon oder unter der Nummer +49 911-894-0110."
+    }
+  },
+  "default_response": {
+    "en": "I'm currently unable to provide a detailed answer, but I recommend contacting the reception. Dial 9 from your room phone.",
+    "de": "Ich kann momentan keine vollständige Antwort geben. Bitte wende dich an die Rezeption – wähle die 9 vom Zimmertelefon."
+  }
+}

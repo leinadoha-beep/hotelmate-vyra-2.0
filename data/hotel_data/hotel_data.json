@@ -1,0 +1,43 @@
+{
+  "name": "Melia Grand Hermitage",
+  "location": {
+    "address": "1 Grand Hermitage Alley, Golden Sands 9007, Bulgaria",
+    "city": "Golden Sands",
+    "country": "Bulgaria",
+    "coordinates": {
+      "lat": 43.286293,
+      "lon": 28.042018
+    }
+  },
+  "contact": {
+    "telefon": "+359 52 333 222",
+    "email": "melia.grand.hermitage@melia.com",
+    "website": "https://www.melia.com/en/hotels/bulgaria/varna/melia-grand-hermitage"
+  },
+  "amenities": [
+    "WiFi gratuit",
+    "Piscină interioară și exterioară",
+    "Centru Spa",
+    "Restaurante internaționale",
+    "Servicii all inclusive",
+    "Acces plajă",
+    "Club copii",
+    "Fitness",
+    "Parcare"
+  ],
+  "rooms": {
+    "standard": {
+      "descriere": "Cameră spațioasă cu balcon, vedere la parc sau mare.",
+      "facilități": ["AC", "TV LCD", "Seif", "Mini-bar", "WiFi"]
+    },
+    "suite": {
+      "descriere": "Suită luxoasă cu living separat și servicii VIP.",
+      "facilități": ["Jacuzzi", "Priveliște panoramică", "Room service 24/7"]
+    }
+  },
+  "checkin": "14:00",
+  "checkout": "12:00",
+  "languages_spoken": ["Bulgară", "Engleză", "Rusă", "Germană"],
+  "rating": 4.5,
+  "review_count": 1800
+}

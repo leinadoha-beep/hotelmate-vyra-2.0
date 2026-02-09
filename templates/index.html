@@ -1,130 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HotelMate AI – Vyra</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HotelMate AI - Vyra</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background-color: #0b0b0b;
-            color: #e8e8e8;
-        }
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background-color: #0b0b0b;
+      color: #e8e8e8;
+    }
 
-        header {
-            background-color: #111;
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
+    header {
+      background-color: #111;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
 
-        header img {
-            height: 48px;
-            margin-right: 1rem;
-        }
+    header img {
+      height: 48px;
+      margin-right: 1rem;
+    }
 
-        header h1 {
-            color: #d4af37;
-            font-size: 1.6rem;
-            margin: 0;
-            font-weight: 600;
-        }
+    header h1 {
+      color: #d4af37;
+      font-size: 1.6rem;
+      margin: 0;
+      font-weight: 600;
+    }
 
-        main {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 85vh;
-        }
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 85vh;
+    }
 
-        .chat-box {
-            background-color: #1a1a1a;
-            border-radius: 12px;
-            padding: 2rem;
-            width: 100%;
-            max-width: 620px;
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.25);
-            border: 1px solid #3b3b3b;
-        }
+    .chat-box {
+      background-color: #1a1a1a;
+      border-radius: 12px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 620px;
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.25);
+      border: 1px solid #3b3b3b;
+      position: relative;
+    }
 
-        h2 {
-            text-align: center;
-            color: #d4af37;
-            margin-top: 0;
-        }
+    h2 {
+      text-align: center;
+      color: #d4af37;
+      margin-top: 0;
+    }
 
-        p {
-            text-align: center;
-            opacity: 0.8;
-            margin-bottom: 1.5rem;
-        }
+    p {
+      text-align: center;
+      opacity: 0.8;
+      margin-bottom: 1.5rem;
+    }
 
-        input[type="text"] {
-            width: 100%;
-            padding: 0.9rem;
-            background-color: #2a2a2a;
-            border: 1px solid #444;
-            color: white;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
+    input[type="text"] {
+      width: 100%;
+      padding: 0.9rem;
+      background-color: #2a2a2a;
+      border: 1px solid #444;
+      color: white;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      outline: none;
+    }
 
-        button {
-            width: 100%;
-            padding: 0.9rem;
-            background-color: #d4af37;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            color: black;
-            font-size: 1rem;
-        }
+    button {
+      width: 100%;
+      padding: 0.9rem;
+      background-color: #d4af37;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      color: black;
+      font-size: 1rem;
+    }
 
-        button:hover {
-            background-color: #c6a132;
-        }
+    button:hover {
+      background-color: #c6a132;
+    }
 
-        .response {
-            margin-top: 1.4rem;
-            background-color: #252525;
-            padding: 1rem;
-            border-left: 4px solid #d4af37;
-            border-radius: 6px;
-            line-height: 1.4;
-        }
-    </style>
+    .response {
+      margin-top: 1.4rem;
+      background-color: #252525;
+      padding: 1rem;
+      border-left: 4px solid #d4af37;
+      border-radius: 6px;
+      line-height: 1.4;
+    }
+
+    /* =========================
+       SOURCE INDICATOR (TEST)
+       - Discret, dreapta-jos
+       - Verde: internal
+       - Galben: OpenAI
+       ========================= */
+    .response-source {
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      opacity: 0.55;
+      box-shadow: 0 0 10px rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+      z-index: 9999;
+      pointer-events: none; /* să nu încurce click-uri */
+    }
+
+    .source-internal {
+      background: #2ecc71; /* verde discret */
+    }
+
+    .source-openai {
+      background: #f1c40f; /* galben discret */
+    }
+  </style>
 </head>
 
 <body>
-    <header>
-        <img src="{{ url_for('static', filename='images/logo-big.png') }}" alt="Hotel Logo">
-        <h1>HotelMate AI</h1>
-    </header>
+  <header>
+    <img src="{{ url_for('static', filename='images/logo-big.png') }}" alt="Hotel Logo">
+    <h1>HotelMate AI</h1>
+  </header>
 
-    <main>
-        <div class="chat-box">
-            <h2>Your Assistant – Vyra</h2>
-            <p>Welcome to your digital concierge. Ask anything – Vyra is here for you.</p>
+  <main>
+    <div class="chat-box">
+      <h2>Your Assistant – Vyra</h2>
+      <p>Welcome to your digital concierge. Ask anything – Vyra is here for you.</p>
 
-            <form method="POST">
-                <input
-                    type="text"
-                    name="message"
-                    placeholder="Type your question here..."
-                    autocomplete="off"
-                    autofocus
-                >
-                <button type="submit">Send</button>
-            </form>
+      <form method="POST">
+        <input
+          type="text"
+          name="message"
+          placeholder="Type your question here..."
+          autocomplete="off"
+          autofocus
+        />
+        <button type="submit">Send</button>
+      </form>
 
-            {% if bot_response %}
-                <div class="response">{{ bot_response|safe }}</div>
-            {% endif %}
-        </div>
-    </main>
+      {% if bot_response %}
+        <div class="response">{{ bot_response|safe }}</div>
+
+        {# Safe default: dacă backend-ul nu trimite response_source, îl considerăm internal #}
+        {% set src = response_source|default('internal') %}
+        <div
+          class="response-source {% if src == 'openai' %}source-openai{% else %}source-internal{% endif %}"
+          title="{% if src == 'openai' %}OpenAI response{% else %}Internal response{% endif %}"
+        ></div>
+      {% endif %}
+    </div>
+  </main>
 </body>
 </html>

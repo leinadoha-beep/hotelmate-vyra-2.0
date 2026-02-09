@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HotelMate AI - Vyra</title>
 
   <style>
@@ -97,25 +97,23 @@
       border-left: 4px solid #d4af37;
       border-radius: 6px;
       line-height: 1.4;
+      position: relative;
     }
 
-    /* DOT discret (jos-dreapta) */
+    /* beculeț discret (dreapta jos) */
     .source-dot {
-      position: fixed;
-      right: 14px;
-      bottom: 14px;
-      width: 10px;
-      height: 10px;
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       opacity: 0.75;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-      pointer-events: none;
-      z-index: 9999;
+      box-shadow: 0 0 10px rgba(255,255,255,0.08);
     }
-    .source-dot.hidden { display: none; }
-    .source-dot.local   { background: #33d17a; }  /* verde */
-    .source-dot.openai  { background: #f5c542; }  /* galben */
-    .source-dot.fallback{ background: #ff6b6b; }  /* roșu discret */
+    .dot-local { background: #32d74b; }   /* verde */
+    .dot-openai { background: #ffd60a; }  /* galben */
+    .dot-fallback { background: #ff453a; }/* roșu (opțional) */
   </style>
 </head>
 
@@ -131,28 +129,24 @@
       <p>Welcome to your digital concierge. Ask anything – Vyra is here for you.</p>
 
       <form method="POST">
-        <input
-          type="text"
-          name="message"
-          placeholder="Type your question here..."
-          autocomplete="off"
-          autofocus
-        >
+        <input type="text" name="message" placeholder="Type your question here..." autocomplete="off" autofocus>
         <button type="submit">Send</button>
       </form>
 
       {% if bot_response %}
-        <div class="response">{{ bot_response|safe }}</div>
+        <div class="response">
+          {{ bot_response|safe }}
+
+          {% if response_source == "local" %}
+            <span class="source-dot dot-local" title="local"></span>
+          {% elif response_source == "openai" %}
+            <span class="source-dot dot-openai" title="openai"></span>
+          {% else %}
+            <span class="source-dot dot-fallback" title="fallback"></span>
+          {% endif %}
+        </div>
       {% endif %}
     </div>
   </main>
-
-  {# dot-ul: apare doar după ce există un response_source #}
-  {% if response_source %}
-    <div class="source-dot {{ response_source }}"
-         title="source: {{ response_source }}"></div>
-  {% else %}
-    <div class="source-dot hidden"></div>
-  {% endif %}
 </body>
 </html>

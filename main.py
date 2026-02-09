@@ -7,14 +7,12 @@ from core.router import route_question
 
 app = Flask(__name__)
 
-
 @app.route("/", methods=["GET", "POST"])
 def chat():
     if request.method == "GET":
         return render_template("index.html", bot_response=None, response_source=None)
 
-    user_message = request.form.get("message", "")
-    user_message = user_message.strip() if user_message else ""
+    user_message = request.form.get("message", "").strip()
 
     bot_response, response_source = route_question(user_message)
 
@@ -23,7 +21,6 @@ def chat():
         bot_response=bot_response,
         response_source=response_source
     )
-
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

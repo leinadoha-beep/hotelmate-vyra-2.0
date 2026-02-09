@@ -13,12 +13,16 @@ def chat():
     if request.method == "GET":
         return render_template("index.html", bot_response=None, response_source=None)
 
-    user_message = request.form.get("message", "").strip()
+    user_message = request.form.get("message", "")
+    user_message = user_message.strip() if user_message else ""
 
-    # Router decide răspunsul + sursa (local/openai)
     bot_response, response_source = route_question(user_message)
 
-    return render_template("index.html", bot_response=bot_response, response_source=response_source)
+    return render_template(
+        "index.html",
+        bot_response=bot_response,
+        response_source=response_source
+    )
 
 
 if __name__ == "__main__":

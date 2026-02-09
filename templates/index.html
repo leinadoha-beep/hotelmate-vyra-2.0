@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HotelMate AI – Vyra</title>
+  <title>HotelMate AI - Vyra</title>
 
   <style>
     body {
@@ -48,6 +48,7 @@
       max-width: 620px;
       box-shadow: 0 0 25px rgba(212, 175, 55, 0.25);
       border: 1px solid #3b3b3b;
+      position: relative;
     }
 
     h2 {
@@ -89,13 +90,8 @@
       background-color: #c6a132;
     }
 
-    /* Răspuns + container pentru beculeț */
-    .response-wrap {
-      position: relative;
-      margin-top: 1.4rem;
-    }
-
     .response {
+      margin-top: 1.4rem;
       background-color: #252525;
       padding: 1rem;
       border-left: 4px solid #d4af37;
@@ -103,20 +99,23 @@
       line-height: 1.4;
     }
 
-    /* Beculeț discret (varianta 1) */
+    /* DOT discret (jos-dreapta) */
     .source-dot {
-      position: absolute;
-      right: 10px;
-      bottom: 10px;
-      width: 8px;
-      height: 8px;
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      opacity: 0.85;
-      box-shadow: 0 0 6px rgba(0,0,0,0.35);
+      opacity: 0.75;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      pointer-events: none;
+      z-index: 9999;
     }
-
-    .dot-local { background: #25d366; }   /* verde = intern */
-    .dot-openai { background: #f4c542; }  /* galben = OpenAI */
+    .source-dot.hidden { display: none; }
+    .source-dot.local   { background: #33d17a; }  /* verde */
+    .source-dot.openai  { background: #f5c542; }  /* galben */
+    .source-dot.fallback{ background: #ff6b6b; }  /* roșu discret */
   </style>
 </head>
 
@@ -143,17 +142,17 @@
       </form>
 
       {% if bot_response %}
-        <div class="response-wrap">
-          <div class="response">{{ bot_response|safe }}</div>
-
-          {% if response_source == "local" %}
-            <span class="source-dot dot-local" title="Local"></span>
-          {% elif response_source == "openai" %}
-            <span class="source-dot dot-openai" title="OpenAI"></span>
-          {% endif %}
-        </div>
+        <div class="response">{{ bot_response|safe }}</div>
       {% endif %}
     </div>
   </main>
+
+  {# dot-ul: apare doar după ce există un response_source #}
+  {% if response_source %}
+    <div class="source-dot {{ response_source }}"
+         title="source: {{ response_source }}"></div>
+  {% else %}
+    <div class="source-dot hidden"></div>
+  {% endif %}
 </body>
 </html>

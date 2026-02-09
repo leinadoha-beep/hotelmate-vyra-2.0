@@ -17,34 +17,60 @@ def load_hotel_data():
 HOTEL_DATA = load_hotel_data()
 
 
+def _build_context(hotel_data: dict) -> str:
+    """
+    Construiește un context scurt și safe pentru OpenAI,
+    ca să NU mai fabuleze cu restaurante din Madrid etc.
+    """
+    # Dacă hotel_data e gol, măcar ținem un guardrail minim.
+    hotel_name = hotel_data.get("hotel_name", "the hotel")
+    city = hotel_data.get("city", "")
+    country = hotel_data.get("country", "")
+
+    location_line = ", ".join([x for x in [city, country] if x]).strip()
+    if location_line:
+        location_line = f"Location: {location_line}"
+    else:
+        location_line = "Location: (unknown)"
+
+    return (
+        "You are Vyra, a digital concierge for a specific hotel.\n"
+        "IMPORTANT RULES:\n"
+        "1) If the user asks for places (restaurants/attractions), you MUST keep recommendations within the hotel's city/area.\n"
+        "2) If the location is unknown or you are unsure, ask a short clarifying question instead of inventing places.\n"
+        "3) Keep answers concise, helpful, and friendly.\n\n"
+        f"Hotel: {hotel_name}\n"
+        f"{location_line}\n"
+    )
+
+
 def route_question(user_message: str):
     """
-    Router central Vyra.
-    Returnează (answer_html, source) unde source este: 'local' sau 'openai'
+    Returnează (answer, source)
+    source: "local" | "openai" | "fallback"
     """
-    # Siguranță input
-    if not user_message or not user_message.strip():
+    user_message = (user_message or "").strip()
+    if not user_message:
         return (
             "<strong>Message:</strong> Please type a question.<br>"
             "<strong>Nachricht:</strong> Bitte geben Sie eine Frage ein.",
-            "local",
+            "fallback",
         )
 
-    # 1) Încercăm răspuns local (brain.json)
-    local_answer = find_answer(user_message)
-    # În brain.py ai un fallback text fix când nu găsește răspuns.
-    # Îl detectăm și considerăm că NU e un răspuns real.
-    fallback_text = "Îmi pare rău, nu am găsit un răspuns"
-    if local_answer and (fallback_text.lower() not in local_answer.lower()):
+    # 1) Încercăm local (brain.json)
+    local_answer, found = find_answer(user_message)
+    if found and local_answer:
         return local_answer, "local"
 
-    # 2) Dacă nu avem local, mergem la OpenAI
+    # 2) Dacă nu avem local, mergem la OpenAI cu context
     try:
-        answer = ask_openai(user_message)
+        context = _build_context(HOTEL_DATA)
+        answer = ask_openai(user_message, system_context=context)
         return answer, "openai"
     except Exception:
+        # 3) fallback sigur dacă OpenAI pică
         return (
             "<strong>Message:</strong> Temporary AI issue. Please try again later.<br>"
             "<strong>Nachricht:</strong> Temporäres KI-Problem. Bitte später erneut versuchen.",
-            "local",
+            "fallback",
         )

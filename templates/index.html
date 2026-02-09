@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HotelMate AI - Vyra</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HotelMate AI – Vyra</title>
 
   <style>
     body {
@@ -38,7 +38,6 @@
       justify-content: center;
       align-items: center;
       height: 85vh;
-      position: relative;
     }
 
     .chat-box {
@@ -49,7 +48,6 @@
       max-width: 620px;
       box-shadow: 0 0 25px rgba(212, 175, 55, 0.25);
       border: 1px solid #3b3b3b;
-      position: relative; /* pentru beculeț */
     }
 
     h2 {
@@ -91,30 +89,34 @@
       background-color: #c6a132;
     }
 
-    .response {
+    /* Răspuns + container pentru beculeț */
+    .response-wrap {
+      position: relative;
       margin-top: 1.4rem;
+    }
+
+    .response {
       background-color: #252525;
       padding: 1rem;
       border-left: 4px solid #d4af37;
       border-radius: 6px;
       line-height: 1.4;
-      position: relative;
     }
 
-    /* Beculeț discret (debug) */
-    .source-indicator {
+    /* Beculeț discret (varianta 1) */
+    .source-dot {
       position: absolute;
       right: 10px;
       bottom: 10px;
-      width: 9px;
-      height: 9px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      opacity: 0.75;
-      box-shadow: 0 0 6px rgba(255,255,255,0.15);
+      opacity: 0.85;
+      box-shadow: 0 0 6px rgba(0,0,0,0.35);
     }
-    .src-internal { background: #2ecc71; } /* verde */
-    .src-openai   { background: #f1c40f; } /* galben */
-    .src-error    { background: #e74c3c; } /* rosu */
+
+    .dot-local { background: #25d366; }   /* verde = intern */
+    .dot-openai { background: #f4c542; }  /* galben = OpenAI */
   </style>
 </head>
 
@@ -126,8 +128,8 @@
 
   <main>
     <div class="chat-box">
-      <h2>Your Assistant — Vyra</h2>
-      <p>Welcome to your digital concierge. Ask anything — Vyra is here for you.</p>
+      <h2>Your Assistant – Vyra</h2>
+      <p>Welcome to your digital concierge. Ask anything – Vyra is here for you.</p>
 
       <form method="POST">
         <input
@@ -136,18 +138,20 @@
           placeholder="Type your question here..."
           autocomplete="off"
           autofocus
-        />
+        >
         <button type="submit">Send</button>
       </form>
 
       {% if bot_response %}
-        <div class="response">{{ bot_response|safe }}</div>
-      {% endif %}
+        <div class="response-wrap">
+          <div class="response">{{ bot_response|safe }}</div>
 
-      {% if response_source %}
-        <div class="source-indicator
-          {% if response_source == 'internal' %}src-internal{% elif response_source == 'openai' %}src-openai{% else %}src-error{% endif %}
-        " title="source: {{ response_source }}"></div>
+          {% if response_source == "local" %}
+            <span class="source-dot dot-local" title="Local"></span>
+          {% elif response_source == "openai" %}
+            <span class="source-dot dot-openai" title="OpenAI"></span>
+          {% endif %}
+        </div>
       {% endif %}
     </div>
   </main>

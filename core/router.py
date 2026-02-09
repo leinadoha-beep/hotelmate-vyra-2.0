@@ -4,15 +4,21 @@ import os
 from core.brain import find_answer
 from core.openai_client import ask_openai
 
+
 def load_hotel_data():
-    hotel_data_path = os.path.join("data", "hotel_data.json")
+    # hotel_data.json este în /data/hotel_data.json (rădăcina proiectului)
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    hotel_data_path = os.path.join(base_dir, "data", "hotel_data.json")
+
     try:
         with open(hotel_data_path, encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return {}
 
+
 HOTEL_DATA = load_hotel_data()
+
 
 def _build_openai_prompt(user_message: str) -> str:
     hotel_name = HOTEL_DATA.get("hotel_name", "the hotel")
@@ -24,6 +30,7 @@ def _build_openai_prompt(user_message: str) -> str:
 
     context = f"""
 You are Vyra, the digital concierge for {hotel_name}.
+
 Location:
 - City: {city}
 - Address: {address}
@@ -34,18 +41,20 @@ Hotel context (use ONLY this when possible):
 - FAQ: {json.dumps(faq, ensure_ascii=False)}
 
 Important rules:
-1) If the user asks about nearby places (restaurants, attractions), recommend options GENERICALLY and ask for the user's preference,
+1) If the user asks about nearby places (restaurants, attractions), recommend options GENERICALLY and ask for preferences,
    but DO NOT invent exact business names unless they exist in HOTEL_DATA.
-2) Be concise, friendly, and practical.
-3) If you lack specifics, propose safe next steps (ask reception, provide general guidance).
+2) Be concise, friendly, practical.
+3) If you lack specifics, propose safe next steps (ask reception / general guidance).
+
 User question: {user_message}
 """.strip()
 
     return context
 
+
 def route_question(user_message: str):
     """
-    Returnează mereu: (answer_text, source)
+    Returnează MEREU: (answer_text, source)
     source = "local" | "openai" | "fallback"
     """
     # validare input
@@ -53,12 +62,12 @@ def route_question(user_message: str):
         return (
             "<strong>Message:</strong> Please type a question.<br>"
             "<strong>Nachricht:</strong> Bitte geben Sie eine Frage ein.",
-            "fallback"
+            "fallback",
         )
 
     user_message = user_message.strip()
 
-    # 1) răspuns local (brain)
+    # 1) Local (brain)
     local_answer = find_answer(user_message)
     if local_answer:
         return local_answer, "local"
@@ -69,8 +78,9 @@ def route_question(user_message: str):
         answer = ask_openai(prompt)
         return answer, "openai"
     except Exception:
+        # fallback sigur
         return (
             "<strong>Message:</strong> Temporary AI issue. Please try again later.<br>"
             "<strong>Nachricht:</strong> Temporäres KI-Problem. Bitte später erneut versuchen.",
-            "fallback"
+            "fallback",
         )

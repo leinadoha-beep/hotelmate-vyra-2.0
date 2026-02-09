@@ -1,32 +1,42 @@
 import json
 import os
 
-# brain.json este în /data la rădăcina proiectului (src/data/brain.json pe Render)
-PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))  # .../src
-BRAIN_PATH = os.path.join(PROJECT_ROOT, "data", "brain.json")
+# Calea corectă: /data/brain.json (la rădăcina proiectului)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+BRAIN_PATH = os.path.join(BASE_DIR, "data", "brain.json")
 
-def _load_brain():
+
+def _load_brain_data() -> list:
+    """
+    Încarcă brain.json.
+    IMPORTANT: nu trebuie să crape aplicația dacă fișierul lipsește pe Render.
+    """
     try:
         with open(BRAIN_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+            return data if isinstance(data, list) else []
     except FileNotFoundError:
-        # dacă lipsește, nu crăpăm aplicația; doar nu avem răspuns local
         return []
     except Exception:
         return []
 
-brain_data = _load_brain()
 
-def find_answer(question: str):
-    """Returnează string dacă găsește răspuns local, altfel None."""
+BRAIN_DATA = _load_brain_data()
+
+
+def find_answer(question: str) -> str | None:
     if not question:
         return None
 
     q = question.lower().strip()
+    if not q:
+        return None
 
-    for item in brain_data:
-        for variant in item.get("questions", []):
-            if variant and variant.lower() in q:
-                return item.get("answer")
+    for item in BRAIN_DATA:
+        qs = item.get("questions", [])
+        ans = item.get("answer", "")
+        for candidate in qs:
+            if candidate and candidate.lower() in q:
+                return ans
 
     return None

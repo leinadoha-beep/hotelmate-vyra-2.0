@@ -1,28 +1,34 @@
 import json
 import os
+from difflib import SequenceMatcher
 
-# Calea corectă: /data/brain.json (la rădăcina proiectului)
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-BRAIN_PATH = os.path.join(BASE_DIR, "data", "brain.json")
+HOTELS_DIR = os.path.join(BASE_DIR, "data", "hotels")
+ACTIVE_FILE = os.path.join(HOTELS_DIR, "active_hotel.txt")
 
-
-def _load_brain_data() -> list:
-    """
-    Încarcă brain.json.
-    IMPORTANT: nu trebuie să crape aplicația dacă fișierul lipsește pe Render.
-    """
+def _load_active_hotel():
     try:
-        with open(BRAIN_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return data if isinstance(data, list) else []
-    except FileNotFoundError:
-        return []
+        with open(ACTIVE_FILE, "r", encoding="utf-8") as f:
+            return f.read().strip()
     except Exception:
-        return []
+        return None
 
+def _load_knowledge():
+    hotel = _load_active_hotel()
+    if not hotel:
+        return {}
 
-BRAIN_DATA = _load_brain_data()
+    path = os.path.join(HOTELS_DIR, hotel, "knowledge.json")
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
 
+KB = _load_knowledge()
+
+def _similar(a: str, b: str) -> float:
+    return SequenceMatcher(None, a.lower(), b.lower()).ratio()
 
 def find_answer(question: str) -> str | None:
     if not question:
@@ -32,11 +38,22 @@ def find_answer(question: str) -> str | None:
     if not q:
         return None
 
-    for item in BRAIN_DATA:
-        qs = item.get("questions", [])
-        ans = item.get("answer", "")
-        for candidate in qs:
-            if candidate and candidate.lower() in q:
-                return ans
+    # 1) FACTS (fast path)
+    for key, value in KB.get("facts", {}).items():
+        if key in q:
+            return value
 
-    return None
+    # 2) FAQ (similarity + tags)
+    best_score = 0.0
+    best_answer = None
+
+    for item in KB.get("faq", []):
+        score = _similar(q, item.get("q", ""))
+        if any(tag in q for tag in item.get("tags", [])):
+            score += 0.15
+
+        if score > best_score and score >= 0.72:
+            best_score = score
+            best_answer = item.get("a")
+
+    return best_answer

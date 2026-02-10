@@ -1,0 +1,25 @@
+{
+  "facts": {
+    "checkin": "Check-in starts at 15:00.",
+    "checkout": "Check-out is until 12:00.",
+    "wifi": "Free high-speed Wi-Fi is available in all rooms.",
+    "parking": "On-site parking is available for €8 per day."
+  },
+  "faq": [
+    {
+      "q": "What time is breakfast?",
+      "a": "Breakfast is available as a buffet and is usually charged separately.",
+      "tags": ["breakfast", "mic dejun"]
+    },
+    {
+      "q": "Do you have parking?",
+      "a": "Yes, on-site parking is available for €8 per day.",
+      "tags": ["parking", "car"]
+    },
+    {
+      "q": "Do you have WiFi?",
+      "a": "Yes, free high-speed Wi-Fi is available throughout the hotel.",
+      "tags": ["wifi", "internet"]
+    }
+  ]
+}

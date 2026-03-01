@@ -9,9 +9,16 @@ app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
 def chat():
+    # GET request
     if request.method == "GET":
-        return render_template("index.html", bot_response=None, response_source=None)
+        return render_template(
+            "index.html",
+            bot_response=None,
+            response_source=None,
+            user_message=""
+        )
 
+    # POST request
     user_message = request.form.get("message", "").strip()
 
     bot_response, response_source = route_question(user_message)
@@ -19,8 +26,10 @@ def chat():
     return render_template(
         "index.html",
         bot_response=bot_response,
-        response_source=response_source
+        response_source=response_source,
+        user_message=user_message
     )
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

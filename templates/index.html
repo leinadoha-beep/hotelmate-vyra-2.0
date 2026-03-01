@@ -129,24 +129,27 @@
       <p>Welcome to your digital concierge. Ask anything – Vyra is here for you.</p>
 
       <form method="POST">
-        <input type="text" name="message" placeholder="Type your question here..." autocomplete="off" autofocus>
-        <button type="submit">Send</button>
-      </form>
+    <input type="text" name="message" placeholder="Type your question here..." autocomplete="off" autofocus>
+    <button type="submit">Send</button>
+</form>
 
-      {% if bot_response %}
-        <div class="response">
-          {{ bot_response|safe }}
+{% if user_message %}
+<div class="response user-question">
+    {{ user_message }}
+</div>
+{% endif %}
 
-          {% if response_source == "local" %}
-            <span class="source-dot dot-local" title="local"></span>
-          {% elif response_source == "openai" %}
-            <span class="source-dot dot-openai" title="openai"></span>
-          {% else %}
-            <span class="source-dot dot-fallback" title="fallback"></span>
-          {% endif %}
-        </div>
-      {% endif %}
-    </div>
-  </main>
-</body>
-</html>
+{% if bot_response %}
+<div class="response">
+    {{ bot_response|safe }}
+
+    {% if response_source == "local" %}
+    <span class="source-dot dot-local" title="local"></span>
+    {% elif response_source == "openai" %}
+    <span class="source-dot dot-openai" title="openai"></span>
+    {% else %}
+    <span class="source-dot dot-fallback" title="fallback"></span>
+    {% endif %}
+</div>
+{% endif %}
+

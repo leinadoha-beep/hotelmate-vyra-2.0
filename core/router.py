@@ -52,18 +52,11 @@ User question: {user_message}
     return context
 
 
-def route_question(user_message: str, interaction_count: int = 0):
+def route_question(user_message: str):
     """
     Returnează MEREU: (answer_text, source)
     source = "local" | "openai" | "fallback"
-    
-    interaction_count: Current number of interactions in this session.
-                       If >= 10, returns off-topic message.
     """
-    # Check interaction limit
-    if interaction_count >= 10:
-        return "You are off topic", "fallback"
-    
     # validare input
     if not user_message or not user_message.strip():
         return (

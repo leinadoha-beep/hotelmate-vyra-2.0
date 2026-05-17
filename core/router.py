@@ -92,16 +92,17 @@ def route_question(user_message: str, interaction_count: int = 0, conversation_h
 
     user_message = user_message.strip()
 
-    # Check if interaction limit reached (10 interactions)
-    if interaction_count >= 10:
-        return "Returning to local model", "local"
-
-    # 1) Local (brain)
+    # 1) ALWAYS try Local (brain) first
     local_answer = find_answer(user_message)
     if local_answer:
         return local_answer, "local"
 
-    # 2) OpenAI (only if limit not reached)
+    # 2) Check if interaction limit reached (10 interactions)
+    # If yes, return local-only message instead of trying OpenAI
+    if interaction_count >= 10:
+        return "Conversation context lost.Returning to local model", "local"
+
+    # 3) OpenAI (only if limit not reached)
     try:
         # Include hotel context with conversation history
         hotel_context = _build_hotel_context()

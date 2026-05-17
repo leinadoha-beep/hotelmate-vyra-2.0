@@ -6,9 +6,9 @@ from core.openai_client import ask_openai
 
 
 def load_hotel_data():
-    # hotel_data.json este în /data/hotel_data.json (rădăcina proiectului)
+    # hotel_data.json este în /data/hotel_data/hotel_data.json
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    hotel_data_path = os.path.join(base_dir, "data", "hotel_data.json")
+    hotel_data_path = os.path.join(base_dir, "data", "hotel_data", "hotel_data.json")
 
     try:
         with open(hotel_data_path, encoding="utf-8") as f:
@@ -24,30 +24,43 @@ def _build_hotel_context() -> str:
     """
     Build hotel context string for system prompt.
     """
-    hotel_name = HOTEL_DATA.get("hotel_name", "the hotel")
-    city = HOTEL_DATA.get("city", "")
-    address = HOTEL_DATA.get("address", "")
-    facilities = HOTEL_DATA.get("facilities", {})
-    faq = HOTEL_DATA.get("faq", [])
-    rules = HOTEL_DATA.get("rules", [])
+    hotel_name = HOTEL_DATA.get("name", "the hotel")
+    city = HOTEL_DATA.get("location", {}).get("city", "")
+    address = HOTEL_DATA.get("location", {}).get("address", "")
+    amenities = HOTEL_DATA.get("amenities", [])
+    contact = HOTEL_DATA.get("contact", {})
+    checkin = HOTEL_DATA.get("checkin", "14:00")
+    checkout = HOTEL_DATA.get("checkout", "12:00")
+    languages = HOTEL_DATA.get("languages_spoken", [])
+
+    amenities_str = ", ".join(amenities) if amenities else "None listed"
+    languages_str = ", ".join(languages) if languages else "English"
 
     context = f"""
-You are Vyra, the digital concierge for {hotel_name}.
+YOU ARE: Vyra, a polite digital concierge for {hotel_name} in {city}.
 
-Location:
+HOTEL LOCATION:
+- Name: {hotel_name}
 - City: {city}
 - Address: {address}
+- Check-in: {checkin}
+- Check-out: {checkout}
+- Contact: {contact.get('telefon', 'N/A')} | {contact.get('email', 'N/A')}
+- Languages: {languages_str}
 
-Hotel context (use ONLY this when possible):
-- Facilities: {json.dumps(facilities, ensure_ascii=False)}
-- Rules: {json.dumps(rules, ensure_ascii=False)}
-- FAQ: {json.dumps(faq, ensure_ascii=False)}
+AMENITIES AVAILABLE:
+{amenities_str}
 
-Important rules:
-1) If the user asks about nearby places (restaurants, attractions), recommend options GENERICALLY and ask for preferences,
-   but DO NOT invent exact business names unless they exist in HOTEL_DATA.
-2) Be concise, friendly, practical.
-3) If you lack specifics, propose safe next steps (ask reception / general guidance).
+=== STRICT RULES ===
+1. YOU CAN ONLY discuss information explicitly listed above about THIS hotel.
+2. DO NOT invent restaurant names, addresses, or make reservations.
+3. DO NOT hallucinate dining options, attractions, or nearby services.
+4. If asked about restaurants, dining, or external services:
+   - Say: "I don't have information about external restaurants. Please ask the front desk."
+5. DO NOT make up conversation history or previous exchanges.
+6. Only respond about: check-in/out times, amenities, contact info, hotel policies.
+7. Keep responses short, factual, and helpful.
+8. If asked about something not listed above, say: "I don't have that information. Please contact the front desk at {contact.get('telefon', 'reception')}."
 """.strip()
 
     return context

@@ -22,11 +22,7 @@ def ask_openai(message: str, conversation_history: List[Dict] = None, hotel_cont
         conversation_history = []
     
     # Build system prompt with hotel context
-    system_prompt = f"""
-You are Vyra, a polite and helpful hotel concierge.
-
-{hotel_context}
-""".strip()
+    system_prompt = f"{hotel_context}".strip()
     
     # Build messages list with conversation context
     messages = [

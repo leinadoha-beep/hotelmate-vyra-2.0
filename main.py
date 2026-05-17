@@ -15,10 +15,30 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "vyra_dev_secret_key_change_
 def chat():
     if request.method == "POST":
         user_message = request.form.get("message", "").strip()
-
-        bot_response, response_source = route_question(user_message)
-
-        # Store last exchange in session so it can be shown once after redirect
+        
+        # Initialize conversation history if not exists
+        if "conversation_history" not in session:
+            session["conversation_history"] = []
+        
+        # Get current interaction count and conversation history
+        interaction_count = session.get("interaction_count", 0)
+        conversation_history = session["conversation_history"]
+        
+        # Route the question
+        bot_response, response_source = route_question(
+            user_message, 
+            interaction_count, 
+            conversation_history
+        )
+        
+        # If not at limit, add this exchange to conversation history
+        if interaction_count < 10:
+            conversation_history.append({"role": "user", "content": user_message})
+            conversation_history.append({"role": "assistant", "content": bot_response})
+        
+        # Update session
+        session["conversation_history"] = conversation_history
+        session["interaction_count"] = interaction_count + 1
         session["last_user_message"] = user_message
         session["last_bot_response"] = bot_response
         session["last_response_source"] = response_source

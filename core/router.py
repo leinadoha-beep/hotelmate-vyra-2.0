@@ -20,7 +20,10 @@ def load_hotel_data():
 HOTEL_DATA = load_hotel_data()
 
 
-def _build_openai_prompt(user_message: str) -> str:
+def _build_hotel_context() -> str:
+    """
+    Build hotel context string for system prompt.
+    """
     hotel_name = HOTEL_DATA.get("hotel_name", "the hotel")
     city = HOTEL_DATA.get("city", "")
     address = HOTEL_DATA.get("address", "")
@@ -45,18 +48,27 @@ Important rules:
    but DO NOT invent exact business names unless they exist in HOTEL_DATA.
 2) Be concise, friendly, practical.
 3) If you lack specifics, propose safe next steps (ask reception / general guidance).
-
-User question: {user_message}
 """.strip()
 
     return context
 
 
-def route_question(user_message: str):
+def route_question(user_message: str, interaction_count: int = 0, conversation_history: list = None):
     """
-    Returnează MEREU: (answer_text, source)
-    source = "local" | "openai" | "fallback"
+    Route question through knowledge base and AI with interaction tracking.
+    
+    Args:
+        user_message: Guest's question
+        interaction_count: Current number of interactions in this session
+        conversation_history: List of {'role': str, 'content': str} dicts
+    
+    Returns:
+        Tuple: (answer_text, source)
+        source = "local" | "openai" | "fallback"
     """
+    if conversation_history is None:
+        conversation_history = []
+    
     # validare input
     if not user_message or not user_message.strip():
         return (
@@ -67,15 +79,20 @@ def route_question(user_message: str):
 
     user_message = user_message.strip()
 
+    # Check if interaction limit reached (10 interactions)
+    if interaction_count >= 10:
+        return "Returning to local model", "local"
+
     # 1) Local (brain)
     local_answer = find_answer(user_message)
     if local_answer:
         return local_answer, "local"
 
-    # 2) OpenAI
+    # 2) OpenAI (only if limit not reached)
     try:
-        prompt = _build_openai_prompt(user_message)
-        answer = ask_openai(prompt)
+        # Include hotel context with conversation history
+        hotel_context = _build_hotel_context()
+        answer = ask_openai(user_message, conversation_history)
         return answer, "openai"
     except Exception:
         # fallback sigur

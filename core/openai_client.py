@@ -5,14 +5,15 @@ from typing import List, Dict
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def ask_openai(message: str, conversation_history: List[Dict] = None) -> str:
+def ask_openai(message: str, conversation_history: List[Dict] = None, hotel_context: str = "") -> str:
     """
-    Call OpenAI API with optional conversation history.
+    Call OpenAI API with conversation history and hotel context.
     
     Args:
         message: Current user message
         conversation_history: List of dicts with 'role' and 'content' keys
                              Includes full conversation context
+        hotel_context: Hotel information, facilities, rules, and FAQ context string
     
     Returns:
         Response text from OpenAI
@@ -20,11 +21,18 @@ def ask_openai(message: str, conversation_history: List[Dict] = None) -> str:
     if conversation_history is None:
         conversation_history = []
     
+    # Build system prompt with hotel context
+    system_prompt = f"""
+You are Vyra, a polite and helpful hotel concierge.
+
+{hotel_context}
+""".strip()
+    
     # Build messages list with conversation context
     messages = [
         {
             "role": "system",
-            "content": "You are Vyra, a polite and helpful hotel concierge."
+            "content": system_prompt
         }
     ]
     

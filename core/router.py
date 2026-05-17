@@ -92,7 +92,7 @@ def route_question(user_message: str, interaction_count: int = 0, conversation_h
     try:
         # Include hotel context with conversation history
         hotel_context = _build_hotel_context()
-        answer = ask_openai(user_message, conversation_history)
+        answer = ask_openai(user_message, conversation_history, hotel_context)
         return answer, "openai"
     except Exception:
         # fallback sigur

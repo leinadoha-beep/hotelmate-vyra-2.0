@@ -100,7 +100,7 @@ def route_question(user_message: str, interaction_count: int = 0, conversation_h
     # 2) Check if interaction limit reached (10 interactions)
     # If yes, return local-only message instead of trying OpenAI
     if interaction_count >= 10:
-        return "Conversation context lost.Returning to local model", "local"
+        return "Session conversation limit reached. Using local knowledge base only.", "local"
 
     # 3) OpenAI (only if limit not reached)
     try:

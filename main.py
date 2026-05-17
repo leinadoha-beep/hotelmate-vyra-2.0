@@ -16,29 +16,34 @@ def chat():
     if request.method == "POST":
         user_message = request.form.get("message", "").strip()
         
-        # Initialize conversation history if not exists
+        # Initialize session variables on first request
+        if "interaction_count" not in session:
+            session["interaction_count"] = 0
         if "conversation_history" not in session:
             session["conversation_history"] = []
         
-        # Get current interaction count and conversation history
-        interaction_count = session.get("interaction_count", 0)
+        # Get current state
+        current_interaction_count = session["interaction_count"]
         conversation_history = session["conversation_history"]
         
         # Route the question
         bot_response, response_source = route_question(
             user_message, 
-            interaction_count, 
+            current_interaction_count, 
             conversation_history
         )
         
-        # If not at limit, add this exchange to conversation history
-        if interaction_count < 10:
+        # Update conversation history ONLY if not at limit yet
+        if current_interaction_count < 10:
             conversation_history.append({"role": "user", "content": user_message})
             conversation_history.append({"role": "assistant", "content": bot_response})
+            session["conversation_history"] = conversation_history
         
-        # Update session
-        session["conversation_history"] = conversation_history
-        session["interaction_count"] = interaction_count + 1
+        # Increment interaction count for next request
+        session["interaction_count"] = current_interaction_count + 1
+        session.modified = True  # Explicitly mark session as modified
+        
+        # Store last exchange for display
         session["last_user_message"] = user_message
         session["last_bot_response"] = bot_response
         session["last_response_source"] = response_source

@@ -15,8 +15,14 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "vyra_dev_secret_key_change_
 def chat():
     if request.method == "POST":
         user_message = request.form.get("message", "").strip()
+        
+        # Track interaction count
+        interaction_count = session.get("interaction_count", 0)
 
-        bot_response, response_source = route_question(user_message)
+        bot_response, response_source = route_question(user_message, interaction_count)
+        
+        # Increment interaction count for next request
+        session["interaction_count"] = interaction_count + 1
 
         # Store last exchange in session so it can be shown once after redirect
         session["last_user_message"] = user_message
